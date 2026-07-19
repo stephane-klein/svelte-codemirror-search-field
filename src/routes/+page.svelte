@@ -26,13 +26,15 @@
   ];
 </script>
 
-<h1>svelte-codemirror-search-conceal-poc</h1>
+<h1>svelte-codemirror-search-field component</h1>
 
 <p class="subtitle">
   Enriched search field using CodeMirror and the conceal mechanism. Tags and boolean
   operators are displayed as pills when the cursor is away. Supports autocompletion
   on <kbd>#</kbd>, parenthesis balance validation, and configurable conceal threshold.
 </p>
+
+<p>See documentation: <a href="https://github.com/stephane-klein/svelte-codemirror-search-field">https://github.com/stephane-klein/svelte-codemirror-search-field</a></p>
 
 <details open>
   <summary>Configuration</summary>
