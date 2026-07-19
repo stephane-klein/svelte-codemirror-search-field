@@ -1,0 +1,27 @@
+{
+  "name": "svelte-codemirror-search-field",
+  "version": "0.1.1",
+  "description": "Svelte search field powered by CodeMirror with tag autocomplete and conceal/pill rendering",
+  "private": false,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stephane-klein/svelte-codemirror-search-field.git"
+  },
+  "author": "Stéphane Klein",
+  "license": "MIT",
+  "svelte": "./SearchInput.svelte",
+  "exports": {
+    ".": {
+      "svelte": "./SearchInput.svelte",
+      "default": "./SearchInput.svelte"
+    }
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0",
+    "@codemirror/view": "^6.0.0",
+    "@codemirror/state": "^6.0.0",
+    "@codemirror/commands": "^6.0.0",
+    "@codemirror/autocomplete": "^6.0.0"
+  }
+}
