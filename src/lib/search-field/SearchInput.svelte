@@ -2,7 +2,8 @@
   import { EditorView, keymap, placeholder as cmPlaceholder } from "@codemirror/view";
   import { EditorState, Compartment } from "@codemirror/state";
   import { defaultKeymap } from "@codemirror/commands";
-  import { concealPlugin, findOperators, findQuotedRanges, checkParens } from "./conceal-plugin.js";
+  import { concealPlugin } from "./conceal-plugin.js";
+  import { parse } from "./parser/index.js";
   import { tagAutocompleteExtension } from "./autocomplete-plugin.js";
   import { editorTheme } from "./editor-theme.js";
 
@@ -26,10 +27,14 @@
 
   let operatorError = $derived.by(() => {
     if (!rawContent) return false;
-    const operators = findOperators(rawContent);
-    const quotedRanges = findQuotedRanges(rawContent);
-    const outside = operators.filter(
-      (op) => !quotedRanges.some((qr) => op.from >= qr.from && op.to <= qr.to),
+    const { elements } = parse(rawContent);
+    const quotedRanges = elements
+      .filter((el) => el.type === "quoted")
+      .map(({ from, to }) => ({ from, to }));
+    const outside = elements.filter(
+      (el) =>
+        el.type === "operator" &&
+        !quotedRanges.some((qr) => el.from >= qr.from && el.to <= qr.to),
     );
     for (let i = 1; i < outside.length; i++) {
       const between = rawContent.slice(outside[i - 1].to, outside[i].from);
@@ -40,7 +45,23 @@
 
   let parensError = $derived.by(() => {
     if (!rawContent) return null;
-    return checkParens(rawContent, findQuotedRanges(rawContent));
+    const { elements } = parse(rawContent);
+    const quotedRanges = elements
+      .filter((el) => el.type === "quoted")
+      .map(({ from, to }) => ({ from, to }));
+    let balance = 0;
+    for (const el of elements) {
+      if (el.type !== "open" && el.type !== "close") continue;
+      if (quotedRanges.some((qr) => el.from >= qr.from && el.to <= qr.to)) continue;
+      if (el.type === "open") {
+        balance++;
+      } else {
+        balance--;
+        if (balance < 0) return { type: "unmatched_close" };
+      }
+    }
+    if (balance > 0) return { type: "unmatched_open" };
+    return null;
   });
 
   const concealCompartment = new Compartment();

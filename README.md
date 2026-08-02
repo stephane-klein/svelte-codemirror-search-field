@@ -2,6 +2,8 @@
 
 A Svelte search field component that uses CodeMirror and the conceal mechanism to highlight tags and boolean operators as pills, with autocompletion on <kbd>#</kbd>.
 
+The search DSL (tags, boolean operators, parentheses, quoted strings) is parsed by a [Chevrotain](https://chevrotain.io)-based, framework-agnostic parser ([`src/lib/search-field/parser/`](https://github.com/stephane-klein/svelte-codemirror-search-field/tree/main/src/lib/search-field/parser)). The same parse result drives the pill conceal and the live "Parser output" blocks in the demo.
+
 Demo: https://stephane-klein.github.io/svelte-codemirror-search-field/
 
 This component is extracted from the [svelte-codemirror-search-conceal-poc](https://github.com/stephane-klein/svelte-codemirror-search-conceal-poc) proof-of-concept, which implements the idea described in this note (in French): [POC champ de recherche enrichi avec CodeMirror et conceal](https://notes.sklein.xyz/Projet%2038/zen/).

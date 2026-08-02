@@ -8,3 +8,7 @@ pnpm = "11.15.0"
 [tasks.publish]
 description = "Publish svelte-codemirror-search-field to npm"
 run = "cd src/lib/search-field && pnpm publish --access public"
+
+[tasks.test]
+description = "Run parser unit tests and UI regression tests"
+run = "node --test src/lib/search-field/parser/test/parser.test.js && pnpm vitest run"

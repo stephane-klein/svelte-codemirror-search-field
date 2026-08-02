@@ -1,11 +1,16 @@
 <script>
   import SearchInput from "$lib/search-field/SearchInput.svelte";
+  import ParserOutput from "$lib/ParserOutput.svelte";
 
   let threshold = $state(0);
   let autocompleteMinChars = $state(0);
   let autocompleteDebounceMs = $state(200);
   let showImplicitOperators = $state(false);
   let implicitOperator = $state("and");
+
+  let demo1Content = $state("#linux and #git or #postgresql");
+  let demo2Content = $state("(#docker #podman) and (#linux #git)");
+  let demo3Content = $state("#ffmpeg #wireshark #ffmpeg");
 
   const tags = [
     'linux', 'git', 'curl', 'nginx', 'postgresql', 'sqlite', 'redis',
@@ -32,6 +37,12 @@
   Enriched search field using CodeMirror and the conceal mechanism. Tags and boolean
   operators are displayed as pills when the cursor is away. Supports autocompletion
   on <kbd>#</kbd>, parenthesis balance validation, and configurable conceal threshold.
+</p>
+
+<p class="subtitle">
+  The search DSL (tags, boolean operators, parentheses, quoted strings) is parsed by a
+  <a href="https://chevrotain.io">Chevrotain</a>-based, framework-agnostic parser. The
+  same parse result drives the pills and the "Parser output" blocks below each field.
 </p>
 
 <p>See documentation: <a href="https://github.com/stephane-klein/svelte-codemirror-search-field">https://github.com/stephane-klein/svelte-codemirror-search-field</a></p>
@@ -64,13 +75,11 @@
     </label>
   </div>
 
-  {#if showImplicitOperators}
-    <div class="config-row">
-      <span>Default implicit operator (default and):</span>
-      <label><input type="radio" bind:group={implicitOperator} value="and" /> and</label>
-      <label><input type="radio" bind:group={implicitOperator} value="or" /> or</label>
-    </div>
-  {/if}
+  <div class="config-row">
+    <span>Implicit operator (default and):</span>
+    <label><input type="radio" bind:group={implicitOperator} value="and" /> and</label>
+    <label><input type="radio" bind:group={implicitOperator} value="or" /> or</label>
+  </div>
 </details>
 
 <hr />
@@ -86,8 +95,11 @@
     doc="#linux and #git or #postgresql"
     ph="Search..."
     tags={tags}
+    onchange={(v) => (demo1Content = v)}
   />
 </div>
+
+<ParserOutput doc={demo1Content} implicitOp={implicitOperator} />
 
 <hr class="input-sep" />
 
@@ -102,8 +114,11 @@
     doc="(#docker #podman) and (#linux #git)"
     ph="Search..."
     tags={tags}
+    onchange={(v) => (demo2Content = v)}
   />
 </div>
+
+<ParserOutput doc={demo2Content} implicitOp={implicitOperator} />
 
 <hr class="input-sep" />
 
@@ -118,8 +133,11 @@
     doc="#ffmpeg #wireshark #ffmpeg"
     ph="Search..."
     tags={tags}
+    onchange={(v) => (demo3Content = v)}
   />
 </div>
+
+<ParserOutput doc={demo3Content} implicitOp={implicitOperator} />
 
 <style>
   hr {
