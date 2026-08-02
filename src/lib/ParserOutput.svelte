@@ -1,5 +1,6 @@
 <script>
   import { parse } from "$lib/search-field/parser/index.js";
+  import { astToSql } from "$lib/astToSql.js";
 
   let { doc, implicitOp = null } = $props();
 
@@ -19,6 +20,10 @@
     result.elements
       .map((el) => `${el.type} ${JSON.stringify(el.text)} @${el.from}-${el.to}`)
       .join("\n"),
+  );
+
+  const sqlText = $derived(
+    result.errors.length === 0 ? astToSql(result.ast) : null,
   );
 </script>
 
@@ -43,6 +48,13 @@
       <pre class="parser-value">{elementsText || "—"}</pre>
     </div>
   </div>
+  <div class="parser-sql">
+    <p class="parser-label">
+      Example SQL — illustrative, uses pg_trgm (GIN <code>gin_trgm_ops</code>) on
+      <code>description</code>
+    </p>
+    <pre class="parser-value">{sqlText || "—"}</pre>
+  </div>
 </details>
 
 <style>
@@ -61,6 +73,18 @@
     font-size: 12px;
     color: #666;
     margin: 0 0 2px;
+  }
+
+  .parser-sql {
+    margin-top: 8px;
+  }
+
+  .parser-sql code {
+    font-family: ui-monospace, "Cascadia Code", monospace;
+    font-size: 11px;
+    background: #eee;
+    padding: 0 3px;
+    border-radius: 2px;
   }
 
   .parser-value {
